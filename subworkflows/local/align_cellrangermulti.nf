@@ -42,6 +42,10 @@ workflow CELLRANGER_MULTI_ALIGN {
                     return [ meta, fastq ]
                 vdj: meta.feature_type == "vdj"
                     return [ meta, fastq ]
+                vdjb: meta.feature_type == "vdjb"
+                    return [ meta, fastq ]
+                vdjt: meta.feature_type == "vdjt"
+                    return [ meta, fastq ]
                 ab: meta.feature_type == "ab"
                     if ((fastq == file("$projectDir/assets/EMPTY", checkIfExists: true)) || params.fb_reference) { // when empty, should not check for reference
                         return [ meta, fastq ]
@@ -168,6 +172,8 @@ workflow CELLRANGER_MULTI_ALIGN {
             ch_grouped_fastq.gex.map{ it[0] },
             ch_grouped_fastq.gex,
             ch_grouped_fastq.vdj,
+            ch_grouped_fastq.vdjb,
+            ch_grouped_fastq.vdjt,
             ch_grouped_fastq.ab,
             ch_grouped_fastq.beam,
             ch_grouped_fastq.cmo,
