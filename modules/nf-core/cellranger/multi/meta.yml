@@ -31,6 +31,14 @@ input:
       type: file
       description: FASTQ files for V(D)J immunoprofiling analysis
       pattern: "*.fastq.gz"
+  - vdjb_fastqs:
+      type: file
+      description: FASTQ files for V(D)J-B immunoprofiling analysis
+      pattern: "*.fastq.gz"  
+  - vdjt_fastqs:
+      type: file
+      description: FASTQ files for V(D)J-T immunoprofiling analysis
+      pattern: "*.fastq.gz"  
   - ab_fastqs:
       type: file
       description: FASTQ files for antibody analysis
