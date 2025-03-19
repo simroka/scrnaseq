@@ -122,7 +122,7 @@ ${include_fb}
 ${fb_options_r1_length}
 ${fb_options_r2_length}
 
-${include_vdj}
+{"[vdj]" if any(x == "[vdj]" for x in ["${include_vdj}", "${include_vdjb}", "${include_vdjt}"]) else ""}
 {vdj_reference_path}
 {primer_index}
 ${vdj_options_r1_length}
