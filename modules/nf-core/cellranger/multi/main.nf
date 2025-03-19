@@ -122,7 +122,7 @@ process CELLRANGER_MULTI {
     vdj_options_r1_length = vdj_options_use && meta_vdj.options.containsKey("r1-length") ? "r1-length,${meta_vdj.options["r1-length"]}" : ''
     vdj_options_r2_length = vdj_options_use && meta_vdj.options.containsKey("r2-length") ? "r2-length,${meta_vdj.options["r2-length"]}" : ''
 
-    // Same for VDJ-B and VDJ-T
+    // Same for VDJ-B and VDJ-T -> TODO because does not get used at the moment
     vdjb_options_r1_length = vdjb_options_use && meta_vdjb.options.containsKey("r1-length") ? "r1-length,${meta_vdjb.options["r1-length"]}" : ''
     vdjb_options_r2_length = vdjb_options_use && meta_vdjb.options.containsKey("r2-length") ? "r2-length,${meta_vdjb.options["r2-length"]}" : ''
     vdjt_options_r1_length = vdjt_options_use && meta_vdjt.options.containsKey("r1-length") ? "r1-length,${meta_vdjt.options["r1-length"]}" : ''
