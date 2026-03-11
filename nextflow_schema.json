@@ -285,6 +285,19 @@
                 "skip_cellranger_renaming": {
                     "type": "boolean",
                     "description": "Should it skip the automatic renaming included in cellranger-related modules?"
+                },
+                "cellranger_enable_aggregation": {
+                    "type": "boolean",
+                    "description": "Enable cellranger aggr to aggregate outputs from multiple cellranger count/multi runs. Only runs if there are multiple samples.",
+                    "default": false,
+                    "fa_icon": "fas fa-layer-group"
+                },
+                "cellranger_aggregation_normalization_mode": {
+                    "type": "string",
+                    "description": "Normalization mode to use for cellranger aggr. Only used if cellranger_enable_aggregation is true.",
+                    "default": "mapped",
+                    "enum": ["mapped", "none"],
+                    "fa_icon": "fas fa-layer-group"
                 }
             }
         },
