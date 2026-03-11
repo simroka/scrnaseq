@@ -16,6 +16,8 @@ include { STARSOLO                                          } from '../subworkfl
 include { CELLRANGER_ALIGN                                  } from "../subworkflows/local/align_cellranger"
 include { CELLRANGER_MULTI_ALIGN                            } from "../subworkflows/local/align_cellrangermulti"
 include { CELLRANGERARC_ALIGN                               } from "../subworkflows/local/align_cellrangerarc"
+include { CELLRANGER_AGGR                                   } from "../modules/local/cellranger_aggr"
+include { CELLRANGER_PREPARE_AGGR_INPUT                     } from '../modules/local/cellranger_aggr'
 include { MTX_TO_H5AD                                       } from '../modules/local/mtx_to_h5ad'
 include { H5AD_REMOVEBACKGROUND_BARCODES_CELLBENDER_ANNDATA } from '../subworkflows/nf-core/h5ad_removebackground_barcodes_cellbender_anndata'
 include { GTF_GENE_FILTER                                   } from '../modules/local/gtf_gene_filter'
@@ -192,6 +194,28 @@ workflow SCRNASEQ {
         ch_multiqc_files = ch_multiqc_files.mix(CELLRANGER_ALIGN.out.cellranger_out.map {
             meta, outs -> outs.findAll{ it -> it.name == "web_summary.html"}
         })
+
+        // Run cellranger aggr if enabled and multiple samples
+        if (params.cellranger_enable_aggregation) {
+            // Extract molecule_info.h5 files for aggregation
+            CELLRANGER_PREPARE_AGGR_INPUT( CELLRANGER_ALIGN.out.cellranger_out
+                .map { meta, outs -> 
+                    // Get parent directory of each file, filter to 'outs' directories, get unique
+                    def outs_dir = outs.collect { file -> file.getParent() }
+                        .findAll { dir -> dir.getName() == 'outs' }
+                        .unique()
+                        .first()  // Get the single 'outs' directory
+                    [meta, outs_dir]  // Return tuple with meta and the outs directory
+                } )  
+
+            
+            // Run aggr only if more than one sample (process handles this internally)
+            CELLRANGER_AGGR(
+                CELLRANGER_PREPARE_AGGR_INPUT.out.molecule_info.collect(),
+                params.cellranger_aggregation_normalization_mode
+            )
+            
+        }
     }
 
     // Run cellrangerarc pipeline
@@ -274,6 +298,28 @@ workflow SCRNASEQ {
             meta, outs -> outs.findAll{ it -> it.name == "web_summary.html" }
         })
         ch_mtx_matrices = ch_mtx_matrices.mix( CELLRANGER_MULTI_ALIGN.out.cellrangermulti_mtx_raw, CELLRANGER_MULTI_ALIGN.out.cellrangermulti_mtx_filtered )
+
+
+        // Run cellranger aggr if enabled and multiple samples
+        if (params.cellranger_enable_aggregation) {
+            // Extract molecule_info.h5 files for aggregation
+            CELLRANGER_PREPARE_AGGR_INPUT( CELLRANGER_MULTI_ALIGN.out.cellrangermulti_out
+                .map { meta, outs -> 
+                    // Get parent directory of each file, filter to 'outs' directories, get unique
+                    def outs_dir = outs.collect { file -> file.getParent() }
+                        .findAll { dir -> dir.getName() == 'outs' }
+                        .unique()
+                        .first()  // Get the single 'outs' directory
+                    [meta, outs_dir]  // Return tuple with meta and the outs directory
+                } )
+            
+            // Run aggr only if more than one sample (process handles this internally)
+            CELLRANGER_AGGR(
+                CELLRANGER_PREPARE_AGGR_INPUT.out.molecule_info.collect(),
+                params.cellranger_aggregation_normalization_mode
+            )
+            
+        }
 
     }
 
